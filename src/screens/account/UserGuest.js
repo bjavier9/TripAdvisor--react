@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
   },
   image: {
-    height: 300,
+    height: 250,
     width: "100%",
     marginBottom: 40,
   },

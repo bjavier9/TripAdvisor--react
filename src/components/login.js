@@ -7,8 +7,6 @@ export default function Loading(props) {
   return (
     <Overlay
       isVisible={isVisible}
-      windowBackgroundColor="rgba(0,0,0,0.5)"
-      overlayBackGroundColor="transparent"
       overlayStyle={styles.Overlay}
     >
       <View style={styles.view}>

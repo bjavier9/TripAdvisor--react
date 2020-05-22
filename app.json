@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "tripavisor",
-    "slug": "tripavisor",
+    "name": "tripadvisor",
+    "slug": "tripadvisor",
     "platforms": [
       "ios",
       "android",
