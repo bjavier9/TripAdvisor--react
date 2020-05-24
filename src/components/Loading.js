@@ -8,6 +8,8 @@ export default function Loading(props) {
     <Overlay
       isVisible={isVisible}
       overlayStyle={styles.Overlay}
+      windowBackgroundColor="rgba(0,0,0,0.5)"
+      overlayBackgroundColor="transparent"
     >
       <View style={styles.view}>
         <ActivityIndicator size="large" color="#00a680" />

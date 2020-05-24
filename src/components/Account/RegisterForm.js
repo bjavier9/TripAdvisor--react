@@ -3,12 +3,18 @@ import { StyleSheet, View } from "react-native";
 import { Input, Icon, Button } from "react-native-elements";
 import { validateEmail } from "../../utils/validations";
 import { size, isEmpty } from "lodash";
+import * as firebase from "firebase";
+import { useNavigation } from "@react-navigation/native";
+import Loading from "../Loading";
+
 export default function RegisterForm(props) {
   const { toastRef } = props;
   const [showPassword, setShowPassword] = useState(false);
   const [repeatPassword, setRepeatPassword] = useState(false);
   const [formData, setFormData] = useState(defaultFormvalue());
+  const [loading, setLoading] = useState(false);
 
+  const navigation = useNavigation();
   const onSubmit = () => {
     console.log(validateEmail(formData.email));
     if (
@@ -24,10 +30,23 @@ export default function RegisterForm(props) {
       toastRef.current.show("password no coinciden");
     } else if (size(formData.password) < 6) {
       toastRef.current.show(
-        "El password tiene que tener al menos 6 caracteres."
+        "El password tiene que tener al menos 6 caracteres.",
       );
     } else {
-      console.log("ok");
+      setLoading(true);
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(formData.email, formData.password)
+        .then((response) => {
+          // console.log(response);
+          setLoading(false);
+          navigation.navigate("account");
+        })
+        .catch((err) => {
+          setLoading(false);
+          toastRef.current.show("El email ya esta en uso.");
+        });
+      console.log("okey");
     }
   };
 
@@ -40,13 +59,11 @@ export default function RegisterForm(props) {
         placeholder="Correo electronico"
         containerStyle={styles.inputForms}
         onChange={(e) => onChange(e, "email")}
-        rightIcon={
-          <Icon
-            type="material-community"
-            name="at"
-            iconStyle={styles.iconRight}
-          />
-        }
+        rightIcon={<Icon
+          type="material-community"
+          name="at"
+          iconStyle={styles.iconRight}
+        />}
       />
       <Input
         placeholder="Password"
@@ -54,14 +71,12 @@ export default function RegisterForm(props) {
         password={true}
         onChange={(e) => onChange(e, "password")}
         secureTextEntry={showPassword ? false : true}
-        rightIcon={
-          <Icon
-            type="material-community"
-            name={showPassword ? "eye-off-outline" : "eye-outline"}
-            iconStyle={styles.iconRight}
-            onPress={() => setShowPassword(!showPassword)}
-          />
-        }
+        rightIcon={<Icon
+          type="material-community"
+          name={showPassword ? "eye-off-outline" : "eye-outline"}
+          iconStyle={styles.iconRight}
+          onPress={() => setShowPassword(!showPassword)}
+        />}
       />
       <Input
         placeholder="Repeat password"
@@ -69,14 +84,12 @@ export default function RegisterForm(props) {
         onChange={(e) => onChange(e, "repeatPassword")}
         password={true}
         secureTextEntry={true}
-        rightIcon={
-          <Icon
-            type="material-community"
-            name={repeatPassword ? "eye-off-outline" : "eye-outline"}
-            iconStyle={styles.iconRight}
-            onPress={() => setRepeatPassword(!repeatPassword)}
-          />
-        }
+        rightIcon={<Icon
+          type="material-community"
+          name={repeatPassword ? "eye-off-outline" : "eye-outline"}
+          iconStyle={styles.iconRight}
+          onPress={() => setRepeatPassword(!repeatPassword)}
+        />}
       />
       <Button
         onPress={onSubmit}
@@ -84,6 +97,7 @@ export default function RegisterForm(props) {
         buttonStyle={styles.btnRegister}
         containerStyle={styles.btnContainerRegister}
       />
+      <Loading isVisible={loading} text="Creando cuenta" />
     </View>
   );
 }
